@@ -81,6 +81,19 @@ ENV ODOO_RC /etc/odoo/odoo.conf
 
 COPY wait-for-psql.py /usr/local/bin/wait-for-psql.py
 
+# configure startup
+COPY /sshd_config /etc/ssh/
+COPY /ssh_setup.sh /tmp
+RUN mkdir -p /opt/startup \
+   && chmod -R +x /opt/startup \
+   && chmod -R +x /tmp/ssh_setup.sh \
+   && (sleep 1;/tmp/ssh_setup.sh 2>&1 > /dev/null) \
+   && rm -rf /tmp/*  
+
+ENV SSH_PORT 2222
+EXPOSE 2222
+
+
 # Set default user when running the container
 USER odoo
 

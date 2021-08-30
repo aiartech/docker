@@ -13,6 +13,14 @@ fi
 : ${USER:=${DB_ENV_POSTGRES_USER:=${POSTGRES_USER:='odoo'}}}
 : ${PASSWORD:=${DB_ENV_POSTGRES_PASSWORD:=${POSTGRES_PASSWORD:='odoo'}}}
 
+# Get environment variables to show up in SSH session
+eval $(printenv | sed -n "s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/g' | sed '/=/s//="/' | sed 's/$/"/' >> /etc/profile)
+
+# starting sshd process
+sed -i "s/SSH_PORT/$SSH_PORT/g" /etc/ssh/sshd_config
+/usr/sbin/sshd
+
+
 DB_ARGS=()
 function check_config() {
     param="$1"
